@@ -1,0 +1,139 @@
+﻿@model Du_An_Dua_MVC.ViewModels.SanXuatViewModel
+@* 👆 1. TỜ LỆNH SẢN XUẤT (ViewModel):
+   Trang này không dùng Model đơn lẻ, mà dùng một "ViewModel" (Model lắp ghép).
+   Nó chứa: 1 cục Nguyên liệu + 1 Danh sách các Thành phẩm. *@
+
+@{
+    ViewData["Title"] = "Chế Biến Dừa";
+}
+
+<h2 class="text-center text-primary mb-4">🥥 QUY TRÌNH CHẾ BIẾN (LỘT/MÀI/SẤY)</h2>
+
+<form asp-action="Index" method="post">
+    <div class="row">
+
+        @* --- CỘT TRÁI: ĐẦU VÀO (INPUT) --- *@
+        <div class="col-md-5">
+            <div class="card border-primary">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="m-0">1. Nguyên Liệu (Đầu Vào)</h5>
+                </div>
+                <div class="card-body">
+                    <div class="form-group mb-3">
+                        <label>Chọn loại dừa đem làm:</label>
+                        @* Dropdown chọn dừa nguyên liệu *@
+                        <select asp-for="NguyenLieuId" class="form-control" asp-items="ViewBag.NguyenLieuList"></select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Số lượng đem làm (Trái/Kg):</label>
+                        @* Nhập số lượng dừa hy sinh *@
+                        <input asp-for="SoLuongVao" type="number" class="form-control" id="txtDauVao" value="0" min="0" />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @* Mũi tên chuyển đổi ở giữa *@
+        <div class="col-md-2 d-flex align-items-center justify-content-center">
+            <h1 class="text-muted">➡️</h1>
+        </div>
+
+        @* --- CỘT PHẢI: ĐẦU RA (OUTPUT) --- *@
+        <div class="col-md-5">
+            <div class="card border-success">
+                <div class="card-header bg-success text-white">
+                    <h5 class="m-0">2. Thành Phẩm (Thu Được)</h5>
+                </div>
+                <div class="card-body">
+
+                    @* 👇 2. KỸ THUẬT BINDING DANH SÁCH (List Binding):
+                       Ta dùng vòng lặp for (có biến i) để tạo ra nhiều dòng nhập liệu.
+                       Tại sao phải có [i]?
+                       Để khi gửi về Server, nó biết xếp hàng: "Đây là món thứ 1, đây là món thứ 2...". *@
+                    @for (int i = 0; i < Model.DanhSachThanhPham.Count; i++)
+                    {
+                        <div class="row mb-2 border-bottom pb-2">
+                            <div class="col-7">
+                                @* Dropdown chọn thành phẩm (Cơm, Nước, Gáo...) *@
+                                <select asp-for="DanhSachThanhPham[i].ThanhPhamId"
+                                        asp-items="@(new SelectList(ViewBag.ThanhPhamList, "Id", "TenLoai"))"
+                                        class="form-control form-control-sm">
+                                </select>
+                            </div>
+                            <div class="col-5">
+                                @* Ô nhập số lượng thu được *@
+                                <input asp-for="DanhSachThanhPham[i].SoLuongRa"
+                                       type="number" class="form-control form-control-sm txtDauRa"
+                                       placeholder="Số lượng" value="0" min="0" />
+                            </div>
+                        </div>
+                    }
+
+                    <div class="alert alert-secondary mt-3">
+                        <strong>Tổng thu được: </strong> <span id="lblTongDauRa">0</span>
+                    </div>
+
+                    @* Thông báo lỗi (mặc định ẩn đi) *@
+                    <div id="msgCanhBao" class="alert alert-danger" style="display:none;">
+                        ⛔ Vô lý! Dừa con không thể nhiều hơn dừa mẹ!
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center mt-4">
+        <button type="submit" id="btnThucHien" class="btn btn-primary btn-lg px-5">
+            ✅ THỰC HIỆN CHẾ BIẾN
+        </button>
+    </div>
+</form>
+
+@* 👇 3. BỘ NÃO KIỂM TRA (Client Logic): *@
+<script>
+    // 1. ĐIỂM DANH CÁC CÔNG CỤ
+    const txtDauVao = document.getElementById('txtDauVao');
+    const listDauRa = document.querySelectorAll('.txtDauRa'); // Lấy tất cả các ô bên phải
+    const lblTongDauRa = document.getElementById('lblTongDauRa');
+    const msgCanhBao = document.getElementById('msgCanhBao');
+    const btnThucHien = document.getElementById('btnThucHien');
+
+    // 2. HÀM TÍNH TOÁN LOGIC
+    function kiemTraLogic() {
+        // Lấy số lượng đầu vào (Mẹ)
+        let luongVao = parseFloat(txtDauVao.value) || 0;
+
+        // Tính tổng đầu ra (Các Con)
+        let tongRa = 0;
+        listDauRa.forEach(function(item) {
+            tongRa += parseFloat(item.value) || 0;
+        });
+
+        // Hiển thị tổng
+        lblTongDauRa.innerText = tongRa;
+
+        // 3. QUY LUẬT BẢO TOÀN VẬT CHẤT:
+        // Đầu ra không được lớn hơn Đầu vào (trừ hao hụt).
+        // Ví dụ: Xẻ 10 trái dừa thì tối đa thu được 10 sọ + 10 nước, không thể ra 11 được.
+        // (Ở đây mình đang so sánh đơn giản, sau này có thể chỉnh lại theo tỷ lệ % hao hụt).
+        if (tongRa > luongVao) {
+            // Logic SAI: Hiện cảnh báo Đỏ
+            msgCanhBao.style.display = 'block';
+            btnThucHien.disabled = true; // Khóa nút Submit, không cho Lưu
+            btnThucHien.innerText = "⛔ Số liệu vô lý!";
+        } else {
+            // Logic ĐÚNG: Ẩn cảnh báo
+            msgCanhBao.style.display = 'none';
+            btnThucHien.disabled = false; // Mở khóa nút
+            btnThucHien.innerText = "✅ THỰC HIỆN CHẾ BIẾN";
+        }
+    }
+
+    // 4. GẮN "MÁY NGHE LÉN" (Event Listeners):
+    // Cứ gõ phím vào ô Đầu Vào hoặc Đầu Ra là tính lại ngay lập tức
+    txtDauVao.addEventListener('input', kiemTraLogic);
+    listDauRa.forEach(function(item) {
+        item.addEventListener('input', kiemTraLogic);
+    });
+</script>

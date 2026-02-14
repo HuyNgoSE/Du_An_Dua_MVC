@@ -1,0 +1,124 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    @* 👇 1. TIÊU ĐỀ ĐỘNG:
+       @ViewData["Title"]: Mỗi trang con sẽ tự điền tên mình vào đây.
+       Ví dụ: Trang chủ thì hiện "Trang Chủ - Coco-Web", trang Login thì hiện "Đăng Nhập - Coco-Web". *@
+    <title>@ViewData["Title"] - Coco-Web</title>
+
+    <script type="importmap"></script>
+
+    @* 👇 2. KHO VŨ KHÍ (CSS):
+       Nhúng Bootstrap và FontAwesome (icon) vào đây để cả website cùng xài.
+       Nhúng ở đây thì các trang con không cần nhúng lại nữa. *@
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/Du_An_Dua_MVC.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+</head>
+<body>
+    <header>
+        @* --- THANH MENU ĐIỀU HƯỚNG (NAVBAR) --- *@
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-success border-bottom box-shadow mb-3">
+            <div class="container-fluid">
+
+                @* Logo trang web *@
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">🥥 Coco-Web</a>
+
+                @* Nút 3 gạch (Hamburger) khi xem trên điện thoại *@
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+
+                    @* 👇 3. DANH SÁCH MENU BÊN TRÁI: *@
+                    <ul class="navbar-nav flex-grow-1">
+                        <li class="nav-item">
+                            <a class="nav-link text-white" asp-area="" asp-controller="Home" asp-action="Index">Trang Chủ</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" asp-controller="LoaiDua" asp-action="Index">🥥 Quản Lý Dừa</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" asp-controller="SanXuat" asp-action="Index">
+                                <i class="fa-solid fa-gears"></i> Chế Biến
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" asp-controller="DoiTacs" asp-action="Index">
+                                <i class="fa-solid fa-users"></i> Đối Tác
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-warning fw-bold" asp-controller="GiaoDiches" asp-action="Index">
+                                <i class="fa-solid fa-cart-shopping"></i> Giao Dịch
+                            </a>
+                        </li>
+                    </ul>
+
+                    @* 👇 4. KHU VỰC TÀI KHOẢN BÊN PHẢI (Login/Logout): *@
+                    <ul class="navbar-nav">
+
+                        @* Kiểm tra: Nếu đã đăng nhập rồi (IsAuthenticated == true) *@
+                        @if (User.Identity?.IsAuthenticated == true)
+                        {
+                            <li class="nav-item">
+                                <span class="nav-link text-light">
+                                    @* Hiện tên người dùng *@
+                                    👋 Xin chào, <b>@User.Identity.Name</b>
+                                </span>
+                            </li>
+                            <li class="nav-item">
+                                @* Nút Đăng Xuất *@
+                                <a class="nav-link text-danger fw-bold bg-white rounded ms-2 px-3" asp-controller="Account" asp-action="Logout">
+                                    <i class="fa-solid fa-right-from-bracket"></i> Đăng Xuất
+                                </a>
+                            </li>
+                        }
+                        else
+                        {
+                            @* Nếu chưa đăng nhập -> Hiện nút Đăng Nhập *@
+                            <li class="nav-item">
+                                <a class="nav-link text-white" asp-controller="Account" asp-action="Login">
+                                    <i class="fa-solid fa-key"></i> Đăng Nhập
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="container">
+        <main role="main" class="pb-3">
+            @* 👇 5. LỖ HỔNG KHÔNG GIAN (QUAN TRỌNG NHẤT):
+               @RenderBody(): Đây là chỗ để nhét nội dung của các trang con vào.
+               Ví dụ: Em vào trang GiaoDich, toàn bộ code HTML của trang GiaoDich sẽ chui vào nằm đúng vị trí này.
+               Nhờ đó mà trang nào cũng có sẵn Menu và Footer. *@
+            @RenderBody()
+        </main>
+    </div>
+
+    @* --- CHÂN TRANG (FOOTER) --- *@
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2026 - Coco-Web System - Bản quyền thuộc về Ngô Quang Huy
+        </div>
+    </footer>
+
+    @* 👇 6. KHO VŨ KHÍ JS:
+       Nhúng Javascript ở cuối trang để Web chạy nhanh hơn (Load xong hình rồi mới load kịch bản). *@
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    @* Chừa chỗ cho các trang con nhúng thêm Script riêng nếu cần *@
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

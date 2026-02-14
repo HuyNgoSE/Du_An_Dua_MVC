@@ -1,0 +1,207 @@
+﻿@model Du_An_Dua_MVC.Models.GiaoDich
+
+@{
+    ViewData["Title"] = "Tạo Giao Dịch Mới";
+
+    // 👇 1. TIN NHẮN TỪ SẾP (TempData):
+    // Controller gửi lời khen "Lưu thành công rồi!" qua đây.
+    // View hứng lấy để hiển thị cho Cha vui.
+    var successMessage = TempData["SuccessMessage"] as string;
+}
+
+<div class="container mt-4">
+
+    @* 👇 2. LOA PHƯỜNG (Alert Box):
+       Chỉ hiện ra khi có tin nhắn thành công. Hiện xong bấm X tắt được. *@
+    @if (!string.IsNullOrEmpty(successMessage))
+    {
+        <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert" id="successAlert">
+            <i class="fa-solid fa-circle-check fa-lg me-2"></i> <strong>Tuyệt vời!</strong> @successMessage
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="card shadow-lg border-0">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0"><i class="fa-solid fa-file-invoice-dollar"></i> Phiếu Giao Dịch Mới</h4>
+        </div>
+
+        <div class="card-body bg-light">
+            @* 👇 3. KHỞI ĐỘNG FORM:
+               id="formGiaoDich": Đặt tên ID để tí nữa Javascript dễ sai bảo. *@
+            <form asp-action="Create" id="formGiaoDich">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="row">
+                    @* --- CỘT TRÁI: THÔNG TIN CƠ BẢN --- *@
+                    <div class="col-md-6 border-end">
+                        <h5 class="text-secondary mb-3 border-bottom pb-2">1. Thông tin chung</h5>
+
+                        <div class="mb-3">
+                            <label asp-for="NgayGiaoDich" class="form-label fw-bold"><i class="fa-solid fa-calendar-days"></i> Ngày Giao Dịch</label>
+                            @* Input ngày tháng, bấm vào là hiện lịch *@
+                            <input asp-for="NgayGiaoDich" class="form-control" id="txtNgayGiaoDich" />
+                            <span asp-validation-for="NgayGiaoDich" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold mb-2"><i class="fa-solid fa-right-left"></i> Loại Giao Dịch</label>
+                            <div class="d-flex gap-3">
+                                @* 👇 4. NÚT CHỌN (Radio Button):
+                                   Logic: Chỉ được chọn 1 trong 2 (Mua hoặc Bán).
+                                   asp-for="IsMuaHang" sẽ tự map vào biến bool (True/False). *@
+                                <div class="form-check p-2 border rounded bg-white w-50">
+                                    <input class="form-check-input ms-1" type="radio" asp-for="IsMuaHang" value="true" id="optMua" checked>
+                                    <label class="form-check-label fw-bold text-success ms-2" for="optMua">
+                                        <i class="fa-solid fa-arrow-down"></i> MUA VÀO
+                                    </label>
+                                </div>
+                                <div class="form-check p-2 border rounded bg-white w-50">
+                                    <input class="form-check-input ms-1" type="radio" asp-for="IsMuaHang" value="false" id="optBan">
+                                    <label class="form-check-label fw-bold text-danger ms-2" for="optBan">
+                                        <i class="fa-solid fa-arrow-up"></i> BÁN RA
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="DoiTacId" class="form-label fw-bold"><i class="fa-solid fa-user-tie"></i> Đối Tác</label>
+                            @* Dropdown chọn người mua/bán *@
+                            <select asp-for="DoiTacId" class="form-select" asp-items="ViewBag.DoiTacId" id="ddlDoiTac">
+                                <option value="">-- Chọn Khách Hàng / Nhà Cung Cấp --</option>
+                            </select>
+                            <span asp-validation-for="DoiTacId" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    @* --- CỘT PHẢI: CHI TIẾT HÀNG HÓA (Xử lý logic nhiều ở đây) --- *@
+                    <div class="col-md-6">
+                        <h5 class="text-secondary mb-3 border-bottom pb-2">2. Chi tiết hàng hóa</h5>
+
+                        <div class="mb-3">
+                            <label asp-for="LoaiDuaId" class="form-label fw-bold"><i class="fa-solid fa-tree"></i> Loại Dừa</label>
+
+                            @* 👇 5. TUYỆT CHIÊU "GIẤU GIÁ" (Data Attribute):
+                               Đây là phần tinh túy nhất. Ta dùng vòng lặp để in ra từng loại dừa.
+                               NHƯNG: Ta lén nhét cái giá tiền vào thuộc tính 'data-gia'.
+                               Người dùng không thấy, nhưng Javascript sẽ thấy để tự điền giá. *@
+                            <select asp-for="LoaiDuaId" class="form-select" id="ddlLoaiDua">
+                                <option value="" data-gia="0">-- Chọn Loại Dừa --</option>
+
+                                @if (ViewBag.ListLoaiDua != null)
+                                {
+                                    foreach (var dua in ViewBag.ListLoaiDua)
+                                    {
+                                        // data-gia="@dua.GiaThamKhao": Đây là cái túi thần kỳ chứa giá tiền.
+                                        <option value="@dua.Id" data-gia="@((int)dua.GiaThamKhao)">
+                                            @dua.TenLoai - (Giá gốc: @string.Format("{0:N0}", dua.GiaThamKhao) đ)
+                                        </option>
+                                    }
+                                }
+                            </select>
+                            <span asp-validation-for="LoaiDuaId" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="SoLuong" class="form-label fw-bold"><i class="fa-solid fa-weight-hanging"></i> Số Lượng (Trái)</label>
+                            @* Nhập số lượng -> JS sẽ lắng nghe ô này để tính tổng tiền *@
+                            <input asp-for="SoLuong" class="form-control" type="number" id="txtSoLuong" placeholder="Nhập số trái..." />
+                            <span asp-validation-for="SoLuong" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="DonGia" class="form-label fw-bold"><i class="fa-solid fa-money-bill-1-wave"></i> Đơn Giá (VNĐ)</label>
+                            @* Ô này sẽ tự nhảy số khi chọn loại dừa *@
+                            <input asp-for="DonGia" class="form-control" type="number" id="txtDonGia" placeholder="0" />
+                            <small class="text-muted fst-italic">💡 Mẹo: Hệ thống tự điền giá, nhưng bạn có thể sửa thoải mái.</small>
+                            <span asp-validation-for="DonGia" class="text-danger"></span>
+                        </div>
+
+                        <div class="alert alert-info d-flex justify-content-between align-items-center mt-4">
+                            <span class="fw-bold">Tạm tính:</span>
+                            @* Chỗ hiển thị số tiền to đùng *@
+                            <h3 class="m-0 fw-bold text-primary" id="lblThanhTien">0 đ</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-3 mt-3 border-top pt-3">
+                    <label asp-for="GhiChu" class="form-label fw-bold"><i class="fa-solid fa-note-sticky"></i> Ghi chú thêm</label>
+                    <textarea asp-for="GhiChu" class="form-control" rows="2"></textarea>
+                </div>
+
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                    <a asp-action="Index" class="btn btn-secondary me-md-2">
+                        <i class="fa-solid fa-arrow-left"></i> Quay lại
+                    </a>
+
+                    @* 👇 6. CHIẾN THUẬT 2 NÚT BẤM:
+                       Cả 2 nút đều là Submit, đều gửi Form đi.
+                       Nhưng nút "Save" thì gửi xong về trang chủ.
+                       Nút "SaveAndContinue" thì gửi xong ở lại trang này để nhập tiếp phiếu khác.
+                       Controller sẽ dựa vào cái name="submitButton" để biết người dùng bấm nút nào. *@
+                    <button type="submit" name="submitButton" value="Save" class="btn btn-primary me-md-2">
+                        <i class="fa-solid fa-floppy-disk"></i> LƯU PHIẾU
+                    </button>
+                    <button type="submit" name="submitButton" value="SaveAndContinue" class="btn btn-success">
+                        <i class="fa-solid fa-forward"></i> LƯU & NHẬP TIẾP
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    @* 👇 7. BỘ NÃO CỦA TRANG (Javascript):
+       Phần này làm cho trang web "Sống" động *@
+    <script>
+        // --- BƯỚC 1: ĐIỂM DANH CÁC CÔNG CỤ ---
+        // Lấy các ô nhập liệu ra để sai bảo
+        const ddlLoaiDua = document.getElementById('ddlLoaiDua'); // Menu chọn dừa
+        const txtDonGia = document.getElementById('txtDonGia');   // Ô giá
+        const txtSoLuong = document.getElementById('txtSoLuong'); // Ô số lượng
+        const lblThanhTien = document.getElementById('lblThanhTien'); // Chỗ hiện tổng tiền
+
+        // --- BƯỚC 2: DẠY WEB CÁCH TÍNH TIỀN ---
+        function tinhTongTien() {
+            let sl = parseFloat(txtSoLuong.value) || 0;
+            let gia = parseFloat(txtDonGia.value) || 0;
+            // Công thức lớp 3: Nhân số lượng với đơn giá, rồi thêm dấu phẩy cho đẹp (VNĐ)
+            lblThanhTien.innerText = (sl * gia).toLocaleString('vi-VN') + ' đ';
+        }
+
+        // --- BƯỚC 3: BẮT SỰ KIỆN "CHỌN DỪA" ---
+        if (ddlLoaiDua) {
+            ddlLoaiDua.addEventListener('change', function() {
+                // Khi tay người dùng chọn một loại dừa khác...
+
+                // a. Lấy cái dòng option đang được chọn
+                var selectedOption = this.options[this.selectedIndex];
+
+                // b. Móc cái giá tiền trong túi thần kỳ (data-gia) ra
+                var giaGoiY = selectedOption.getAttribute('data-gia');
+
+                // c. Nếu có giá thì điền vào ô Đơn Giá
+                if (giaGoiY && giaGoiY !== "0") {
+                    txtDonGia.value = giaGoiY;
+                    tinhTongTien(); // Gọi hàm tính tiền ngay lập tức
+
+                    // d. Làm màu: Nháy sáng cái ô giá lên cho người dùng biết là "Tao vừa điền dùm mày đó"
+                    txtDonGia.style.backgroundColor = "#fff3cd";
+                    setTimeout(() => txtDonGia.style.backgroundColor = "white", 500);
+                }
+            });
+        }
+
+        // --- BƯỚC 4: LẮNG NGHE GÕ PHÍM ---
+        // Hễ người dùng gõ số vào ô Số Lượng hoặc sửa ô Đơn Giá -> Tính lại tiền ngay lập tức
+        if (txtSoLuong) txtSoLuong.addEventListener('input', tinhTongTien);
+        if (txtDonGia) txtDonGia.addEventListener('input', tinhTongTien);
+    </script>
+}

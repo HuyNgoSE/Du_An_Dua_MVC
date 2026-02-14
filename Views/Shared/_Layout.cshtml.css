@@ -1,0 +1,76 @@
+﻿/* 👇 1. LỜI DẪN NHẬP:
+   Đây là file CSS tổng (site.css).
+   Nó giống như "Hộp Đồ Trang Điểm" cho cả trang web.
+   Bootstrap đã đẹp rồi, nhưng file này dùng để sửa lại những chỗ chưa ưng ý. */
+
+/* Please see documentation at https://learn.microsoft.com/aspnet/core/client-side/bundling-and-minification
+for details on configuring this project to bundle and minify static web assets. */
+
+/* 👇 2. LOGO WEB (Góc trái trên cùng):
+   Chỉnh sửa chữ "Coco-Web" trên thanh Menu.
+   Đảm bảo nó canh giữa và xuống dòng hợp lý nếu tên quá dài. */
+a.navbar-brand {
+    white-space: normal;
+    text-align: center;
+    word-break: break-all;
+}
+
+/* 👇 3. MÀU LINK MẶC ĐỊNH:
+   Tất cả các thẻ <a> (đường dẫn) trên web, nếu không class đặc biệt,
+   sẽ có màu xanh dương đậm (#0077cc) cho dễ nhìn. */
+a {
+    color: #0077cc;
+}
+
+/* 👇 4. ÁO CHO NÚT BẤM (Primary Button):
+   Ghi đè màu xanh mặc định của Bootstrap.
+   Chuyển sang màu xanh đậm hơn (#1b6ec2) nhìn cho nó "Windows" một chút. */
+.btn-primary {
+    color: #fff;
+    background-color: #1b6ec2;
+    border-color: #1861ac;
+}
+
+/* 👇 5. TAB ĐIỀU HƯỚNG (Nav Pills):
+   Khi một Tab được chọn (active), nó sẽ đổi sang màu xanh đậm giống nút bấm ở trên. */
+.nav-pills .nav-link.active, .nav-pills .show > .nav-link {
+    color: #fff;
+    background-color: #1b6ec2;
+    border-color: #1861ac;
+}
+
+/* 👇 6. KẺ ĐƯỜNG CHỈ (Border):
+   Tạo ra các đường kẻ mỏng màu xám nhạt (#e5e5e5) để phân chia nội dung trên/dưới. */
+.border-top {
+    border-top: 1px solid #e5e5e5;
+}
+
+.border-bottom {
+    border-bottom: 1px solid #e5e5e5;
+}
+
+/* 👇 7. HIỆU ỨNG ĐỔ BÓNG (Shadow):
+   Lớp trang điểm này tạo bóng mờ nhẹ dưới chân các hộp (Box).
+   Giúp giao diện nổi lên 3D, trông hiện đại hơn. */
+.box-shadow {
+    box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
+}
+
+/* 👇 8. NÚT CHẤP NHẬN (Cookie Policy):
+   Chỉnh font chữ cho cái nút "Tôi đồng ý" (thường hiện ở thanh thông báo Cookie dưới đáy). */
+button.accept-policy {
+    font-size: 1rem;
+    line-height: inherit;
+}
+
+/* 👇 9. CHÂN TRANG (Footer):
+   Đây là phần quan trọng nhất!
+   position: absolute; bottom: 0; -> Lệnh này đóng đinh cái Footer xuống đáy màn hình.
+   Giúp Footer không bị trôi lơ lửng giữa màn hình nếu trang web ít nội dung. */
+.footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    white-space: nowrap;
+    line-height: 60px; /* Chiều cao cố định của Footer là 60px */
+}

@@ -1,0 +1,96 @@
+﻿@model Du_An_Dua_MVC.Models.GiaoDich
+@* 👆 1. HỨNG DỮ LIỆU CŨ:
+   Trang này nhận vào tờ hóa đơn cũ (GiaoDich) để mình sửa lại.
+   Các ô nhập liệu sẽ tự động điền thông tin cũ vào. *@
+
+@{
+    ViewData["Title"] = "Chỉnh Sửa Giao Dịch";
+}
+
+<h1>Chỉnh Sửa Giao Dịch</h1>
+
+<h4>Giao Dịch</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        @* 👇 2. NƠI GỬI VỀ:
+           asp-action="Edit": Sửa xong bấm Lưu thì gửi về hàm Edit (Post) *@
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            @* ⚠️ 3. CÁI MỎ NEO (Hidden Input) - SỐNG CÒN:
+               Dòng này giữ cái ID của hóa đơn đang sửa.
+               Nếu thiếu nó: Server sẽ không biết em đang sửa hóa đơn nào -> Lỗi ngay. *@
+            <input type="hidden" asp-for="Id" />
+
+            <div class="form-group">
+                <label asp-for="NgayGiaoDich" class="control-label"></label>
+                @* Tự động điền ngày cũ vào ô *@
+                <input asp-for="NgayGiaoDich" class="form-control" />
+                <span asp-validation-for="NgayGiaoDich" class="text-danger"></span>
+            </div>
+
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    @* Checkbox: Nếu cũ là Mua (True) thì nó tự tick sẵn *@
+                    <input class="form-check-input" asp-for="IsMuaHang" /> @Html.DisplayNameFor(model => model.IsMuaHang)
+                </label>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="SoLuong" class="control-label"></label>
+                <input asp-for="SoLuong" class="form-control" />
+                <span asp-validation-for="SoLuong" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="DonGia" class="control-label"></label>
+                <input asp-for="DonGia" class="form-control" />
+                <span asp-validation-for="DonGia" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="ThanhTien" class="control-label"></label>
+                <input asp-for="ThanhTien" class="form-control" />
+                <span asp-validation-for="ThanhTien" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="GhiChu" class="control-label"></label>
+                <input asp-for="GhiChu" class="form-control" />
+                <span asp-validation-for="GhiChu" class="text-danger"></span>
+            </div>
+
+            @* 👇 4. DROPDOWN THÔNG MINH (Select List):
+               asp-items="ViewBag.DoiTacId": 
+               Dịch: "Hãy lấy danh sách Đối Tác mà Controller đã đóng gói trong túi ViewBag ra đây".
+               Nó sẽ tự động chọn đúng ông Đối tác cũ của hóa đơn này. *@
+            <div class="form-group">
+                <label asp-for="DoiTacId" class="control-label"></label>
+                <select asp-for="DoiTacId" class="form-control" asp-items="ViewBag.DoiTacId"></select>
+                <span asp-validation-for="DoiTacId" class="text-danger"></span>
+            </div>
+
+            @* Tương tự với Loại Dừa *@
+            <div class="form-group">
+                <label asp-for="LoaiDuaId" class="control-label"></label>
+                <select asp-for="LoaiDuaId" class="form-control" asp-items="ViewBag.LoaiDuaId"></select>
+                <span asp-validation-for="LoaiDuaId" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Quay Lại Danh Sách Giao Dịch</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

@@ -1,0 +1,59 @@
+﻿@model Du_An_Dua_MVC.Models.DoiTac
+@* 👆 1. HỒ SƠ ĐƠN LẺ:
+   Khác với trang Index (cầm cả danh sách List), trang này chỉ cầm đúng 1 hồ sơ (DoiTac) cụ thể.
+   Nhiệm vụ: Hiển thị mọi ngóc ngách thông tin của hồ sơ đó. *@
+
+@{
+    ViewData["Title"] = "Chi Tiết";
+}
+
+<h1>Hồ Sơ Đối Tác</h1>
+
+<div class="card shadow-sm mt-4">
+    <div class="card-header bg-info text-white">
+        <h5 class="mb-0"><i class="fa-solid fa-address-card"></i> Thông Tin Chi Tiết</h5>
+    </div>
+    <div class="card-body">
+        @* 👇 2. CẤU TRÚC HIỂN THỊ (Description List):
+           Thẻ <dl> rất hay dùng để hiện kiểu "Nhãn: Giá trị".
+           - <dt>: Cái Nhãn (VD: Tên).
+           - <dd>: Cái Ruột (VD: Nguyễn Văn A). *@
+        <dl class="row">
+            <dt class="col-sm-3">Tên Đối Tác:</dt>
+            <dd class="col-sm-9 font-weight-bold text-primary">@Model.TenDoiTac</dd>
+
+            <dt class="col-sm-3">Số Điện Thoại:</dt>
+            <dd class="col-sm-9">@Model.SoDienThoai</dd>
+
+            <dt class="col-sm-3">Phân Loại:</dt>
+            <dd class="col-sm-9">
+                @* 👇 3. LOGIC TÔ MÀU (Conditional UI):
+                   Dùng If/Else để phân biệt màu sắc cho trực quan.
+                   Người Bán thì màu Xanh, Người Mua thì màu Vàng. *@
+                @if (Model.LoaiDoiTac == "Người Bán")
+                {
+                    <span class="badge bg-success">Người Bán (Nông Dân)</span>
+                }
+                else
+                {
+                    <span class="badge bg-warning text-dark">Khách Mua (Thương Lái)</span>
+                }
+            </dd>
+        </dl>
+    </div>
+    <div class="card-footer text-muted">
+
+        @* 👇 4. NÚT SỬA ĐỊNH VỊ (QUAN TRỌNG):
+           asp-route-id="@Model.Id":
+           Dịch: "Khi bấm nút này, hãy dẫn đến trang Edit, NHƯNG nhớ cầm theo cái ID của ông này nhé!".
+           Ví dụ: Nó sẽ tạo ra link /DoiTac/Edit/5.
+           Nếu thiếu đoạn này, trang Edit sẽ không biết em muốn sửa ai, và sẽ báo lỗi. *@
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">
+            <i class="fa-solid fa-pen"></i> Chỉnh Sửa
+        </a>
+
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="fa-solid fa-arrow-left"></i> Quay Lại
+        </a>
+    </div>
+</div>

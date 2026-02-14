@@ -1,0 +1,93 @@
+﻿@model Du_An_Dua_MVC.Models.DoiTac
+@* 👆 DÒNG LỆNH 1: KHAI BÁO KHUÔN MẪU (Model Binding)
+   Dịch: "Ê View, chuẩn bị cái khuôn DoiTac để hứng dữ liệu nhé!".
+   Tác dụng: Giúp em gõ code sướng tay, gõ "Ten..." nó tự hiện "TenDoiTac" (IntelliSense). *@
+
+@{
+    ViewData["Title"] = "Thêm Đối Tác";
+}
+
+<div class="row justify-content-center mt-4">
+    <div class="col-md-8">
+        <div class="card shadow-sm border-0">
+
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0 fw-bold">
+                    <i class="fa-solid fa-user-plus"></i> Thêm Đối Tác Mới
+                </h4>
+            </div>
+
+            <div class="card-body p-4">
+
+                @* 👇 DÒNG LỆNH 2: HÀNH ĐỘNG GỬI ĐƠN (Form Action)
+                   asp-action="Create": Nghĩa là "Khi bấm nút Lưu, hãy đóng gói toàn bộ dữ liệu trong này
+                   và gửi thẳng đến hàm 'Create' (Post) bên trong Controller". *@
+                <form asp-action="Create">
+
+                    @* Bảng tin báo lỗi tổng quát (nếu có lỗi nặng từ Server trả về) *@
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                    @* --- KHỐI NHẬP TÊN --- *@
+                    <div class="form-group mb-3">
+                        <label asp-for="TenDoiTac" class="control-label fw-bold mb-1">Tên Đối Tác</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fa-solid fa-signature"></i></span>
+
+                            @* 👇 DÒNG LỆNH 3: SỢI DÂY KẾT NỐI (Tag Helper)
+                               asp-for="TenDoiTac": Tự động sinh ra HTML id="TenDoiTac" và name="TenDoiTac".
+                               Nó buộc chặt cái ô nhập này với biến 'TenDoiTac' trong code C#. *@
+                            <input asp-for="TenDoiTac" class="form-control" placeholder="Nhập tên chú/cô/bác..." />
+                        </div>
+                        @* Hiện dòng chữ đỏ nếu quên nhập tên *@
+                        <span asp-validation-for="TenDoiTac" class="text-danger"></span>
+                    </div>
+
+                    @* --- KHỐI NHẬP SỐ ĐIỆN THOẠI --- *@
+                    <div class="form-group mb-3">
+                        <label asp-for="SoDienThoai" class="control-label fw-bold mb-1">Số Điện Thoại</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fa-solid fa-phone"></i></span>
+                            <input asp-for="SoDienThoai" class="form-control" placeholder="09xxx..." />
+                        </div>
+                        <span asp-validation-for="SoDienThoai" class="text-danger"></span>
+                    </div>
+
+                    @* --- KHỐI CHỌN VAI TRÒ --- *@
+                    <div class="form-group mb-4">
+                        <label asp-for="LoaiDoiTac" class="control-label fw-bold mb-1">Vai Trò</label>
+
+                        @* 👇 DÒNG LỆNH 4: MENU XỔ XUỐNG (Dropdown)
+                           Ta dùng thẻ <select> để ép người dùng chỉ được chọn 1 trong 2 options.
+                           Giúp dữ liệu luôn chuẩn, không bị lỗi chính tả như khi nhập tay. *@
+                        <select asp-for="LoaiDoiTac" class="form-control form-select">
+                            <option value="Người Bán">🧑‍🌾 Người Bán (Nông Dân)</option>
+                            <option value="Khách Mua">🚚 Khách Mua (Thương Lái)</option>
+                        </select>
+                        <span asp-validation-for="LoaiDoiTac" class="text-danger"></span>
+                    </div>
+
+                    <div class="d-flex justify-content-between pt-2 border-top">
+                        <a asp-action="Index" class="btn btn-secondary">
+                            <i class="fa-solid fa-arrow-left"></i> Quay lại
+                        </a>
+
+                        @* 👇 DÒNG LỆNH 5: CÒ SÚNG (Submit Button)
+                           Quan trọng nhất là type="submit". Bấm cái này là "Bùm!", dữ liệu bay đi ngay. *@
+                        <button type="submit" class="btn btn-primary px-4 fw-bold shadow">
+                            <i class="fa-solid fa-save"></i> Lưu Hồ Sơ
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        @* 👇 DÒNG LỆNH 6: BẢO VỆ TỪ CỔNG (Client Validation)
+           Nhờ dòng này, nếu em quên nhập liệu, trình duyệt sẽ chặn ngay lập tức (hiện chữ đỏ),
+           không cần tốn công gửi về Server. Web chạy nhanh hơn hẳn. *@
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

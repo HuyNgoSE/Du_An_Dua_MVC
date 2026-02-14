@@ -1,0 +1,72 @@
+﻿@model Du_An_Dua_MVC.Models.DoiTac
+@* 👆 1. HỒ SƠ TỬ TÙ:
+   Trang này nhận vào thông tin của đúng 1 ông DoiTac (dựa trên ID đã chọn)
+   để hiển thị cho người dùng nhìn mặt lần cuối trước khi bấm nút Xóa. *@
+
+@{
+    ViewData["Title"] = "Xóa Đối Tác";
+}
+
+<div class="row justify-content-center mt-5">
+    <div class="col-md-6">
+        <div class="card border-danger shadow">
+            <div class="card-header bg-danger text-white text-center">
+                <h3 class="mb-0 fw-bold"><i class="fa-solid fa-user-xmark"></i> XÓA ĐỐI TÁC</h3>
+            </div>
+            <div class="card-body text-center p-4">
+                <h4 class="text-danger">Cha có chắc muốn xóa người này?</h4>
+                <p class="text-muted small">Cẩn thận: Xóa xong là mất số điện thoại liên lạc đó nha!</p>
+
+                <div class="card bg-light mb-3 shadow-sm">
+                    <div class="card-body">
+                        @* Hiển thị tên to rõ ràng *@
+                        <h3 class="fw-bold text-primary mb-2">@Model.TenDoiTac</h3>
+
+                        @* 👇 2. KỸ THUẬT "NULL COALESCING" (??):
+                           Dịch: "Nếu có số điện thoại thì hiện ra. Còn nếu là NULL thì hiện chữ 'Chưa có số'".
+                           Giúp giao diện không bị trống trơn nếu lỡ dữ liệu bị thiếu. *@
+                        <p class="mb-1 fs-5"><i class="fa-solid fa-phone"></i> @(Model.SoDienThoai ?? "Chưa có số")</p>
+
+                        @* 👇 3. LOGIC TRANG ĐIỂM:
+                           Dùng if/else ngay trong View để quyết định màu sắc.
+                           Nếu là Nông dân -> Màu xanh lá (bg-success).
+                           Nếu là Thương lái -> Màu xanh dương nhạt (bg-info). *@
+                        @if (Model.LoaiDoiTac == "Người Bán")
+                        {
+                            <span class="badge bg-success">Nông Dân (Bán)</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-info text-dark">Thương Lái (Mua)</span>
+                        }
+                    </div>
+                </div>
+
+                @* 👇 4. LỆNH XỬ TRẢM (Form Post):
+                   asp-action="Delete": Khi bấm nút, gửi yêu cầu đến hàm Delete (Post) trong Controller. *@
+                <form asp-action="Delete">
+
+                    @* ⚠️ 5. SÁT THỦ THẦM LẶNG (Hidden Input) - CỰC KỲ QUAN TRỌNG:
+                       Dòng này KHÔNG hiện lên màn hình (type="hidden").
+                       Nhưng nhiệm vụ nó là âm thầm kẹp cái ID (ví dụ: ID = 10) vào gói tin gửi đi.
+                       
+                       Tại sao cần? 
+                       Vì nếu không gửi ID, Controller sẽ ngơ ngác: "Ủa mày kêu tao xóa, mà xóa thằng nào???".
+                       => Thiếu dòng này là chức năng Xóa bị liệt ngay lập tức. *@
+                    <input type="hidden" asp-for="Id" />
+
+                    <div class="d-flex justify-content-center gap-3 mt-3">
+                        <a asp-action="Index" class="btn btn-secondary px-4">
+                            <i class="fa-solid fa-xmark"></i> Hủy bỏ
+                        </a>
+
+                        @* Nút chốt hạ *@
+                        <button type="submit" class="btn btn-danger px-4 fw-bold shadow">
+                            <i class="fa-solid fa-trash-can"></i> Đồng ý Xóa
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

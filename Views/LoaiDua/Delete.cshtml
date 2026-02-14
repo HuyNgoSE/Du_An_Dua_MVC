@@ -1,0 +1,58 @@
+﻿@model Du_An_Dua_MVC.Models.LoaiDua
+@* 👆 1. HỒ SƠ TỬ TÙ:
+   Trang này nhận vào thông tin của đúng 1 loại dừa (LoaiDua) dựa trên ID.
+   Mục đích: Hiển thị ra để hỏi "Có chắc muốn xóa cái ông này không?". *@
+
+@{
+    ViewData["Title"] = "Xóa Loại Dừa";
+}
+
+<div class="row justify-content-center mt-5">
+    <div class="col-md-6">
+        <div class="card border-danger shadow">
+
+            <div class="card-header bg-danger text-white text-center">
+                <h3 class="mb-0 fw-bold"><i class="fa-solid fa-fire"></i> XÓA LOẠI DỪA</h3>
+            </div>
+
+            <div class="card-body text-center p-4">
+                <h4 class="text-danger mb-3">Cha muốn xóa loại dừa này khỏi bảng giá?</h4>
+
+                <div class="alert alert-secondary shadow-sm">
+                    @* 👇 2. HIỆN NGUYÊN HÌNH:
+                       In tên dừa to rõ ràng *@
+                    <h2 class="fw-bold text-dark mb-2">🥥 @Model.TenLoai</h2>
+
+                    <h4 class="text-success fw-bold">
+                        @* 👇 3. FORMAT GIÁ TIỀN:
+                           ToString("#,##0"): Biến số xấu xí 15000 thành 15,000 cho đẹp.
+                           ?? "0": Nếu giá bị rỗng (null) thì hiện số 0. *@
+                        Giá: @(Model.GiaThamKhao.ToString("#,##0") ?? "0") đ
+                    </h4>
+                </div>
+
+                @* 👇 4. MÁY CHÉM (Form Post):
+                   asp-action="Delete": Khi bấm nút Xóa, form này gửi lệnh về hàm Delete (Post) để xử lý. *@
+                <form asp-action="Delete">
+
+                    @* ⚠️ 5. CÁI MỎ NEO (Hidden Input) - CỰC KỲ QUAN TRỌNG:
+                       Dòng này tàng hình (hidden), nhưng nó nắm giữ cái ID của loại dừa cần xóa.
+                       Nếu thiếu dòng này: Bấm nút Xóa, Server sẽ hỏi "Ủa xóa thằng nào?", và lỗi sẽ xảy ra. *@
+                    <input type="hidden" asp-for="Id" />
+
+                    <div class="d-flex justify-content-center gap-3 mt-4">
+                        @* Nút Hủy (Quay lại danh sách) *@
+                        <a asp-action="Index" class="btn btn-secondary px-4">
+                            <i class="fa-solid fa-arrow-left"></i> Quay lại
+                        </a>
+
+                        @* Nút Xóa Thật (Submit Form) *@
+                        <button type="submit" class="btn btn-danger px-4 fw-bold shadow">
+                            <i class="fa-solid fa-trash"></i> Xóa Luôn
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,13 @@
+﻿@{
+    ViewData["Title"] = "Privacy Policy";
+    // 👆 1. GHI NHỚ (Set Data):
+    // Viết dòng chữ "Privacy Policy" vào cuốn sổ tay tên là ViewData.
+}
+@* 👇 2. ĐỌC LẠI (Get Data):
+   Dấu @ là câu thần chú chuyển từ HTML sang C#.
+   Nó bảo: "Ê, mở cuốn sổ ViewData ra, đọc cho tao nghe cái Title là gì".
+   -> Kết quả: Hiện chữ "Privacy Policy" lên màn hình. *@
+<h1>@ViewData["Title"]</h1>
+
+<p>Use this page to detail your site's privacy policy.</p>
+@* (Chỗ này sau này em viết văn bản cam kết bảo mật thông tin khách hàng vào đây là xong) *@

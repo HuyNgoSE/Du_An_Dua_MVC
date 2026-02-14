@@ -1,0 +1,76 @@
+﻿@model IEnumerable<Du_An_Dua_MVC.Models.LoaiDua>
+@* 👆 1. DANH SÁCH TỔNG:
+   Khác với trang Edit/Create (cầm 1 hồ sơ), trang này cầm cả một danh sách (IEnumerable) các loại dừa. *@
+
+@{
+    ViewData["Title"] = "Danh Sách Dừa";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3 mt-3">
+    <h2 class="text-success fw-bold">
+        <i class="fa-solid fa-list"></i> Danh Sách Loại Dừa
+    </h2>
+
+    @* Nút thêm mới dẫn qua trang Create *@
+    <a asp-action="Create" class="btn btn-success shadow">
+        <i class="fa-solid fa-plus"></i> Thêm Mới
+    </a>
+</div>
+
+<table class="table table-bordered table-hover table-striped shadow-sm">
+    <thead class="table-dark text-center">
+        <tr>
+            <th>Mã Số</th>
+            <th class="text-start">Tên Loại Dừa</th>
+            <th class="text-end">Giá Tham Khảo (VNĐ)</th>
+            <th class="text-center" width="200px">Chức Năng</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @* 👇 2. MÁY IN DANH SÁCH (Foreach):
+           Có bao nhiêu loại dừa trong Database, nó sẽ chạy bấy nhiêu vòng để in ra các dòng <tr>. *@
+        @foreach (var dua in Model)
+        {
+            <tr class="align-middle">
+                <td class="text-center fw-bold">@dua.Id</td>
+
+                <td class="text-start">
+                    @dua.TenLoai
+
+                    @* 👇 3. LOGIC TRANG ĐIỂM THÔNG MINH:
+                       Đoạn này View tự động "soi" cái Tên.
+                       - Nếu tên có chữ "(NL)" -> Tự động gắn mác màu Xanh Dương (Nguyên Liệu).
+                       - Nếu tên có chữ "(TP)" -> Tự động gắn mác màu Xanh Lá (Thành Phẩm).
+                       Giúp Cha nhìn vào là biết ngay dừa nhập hay dừa bán. *@
+                    @if (dua.TenLoai.Contains("(NL)"))
+                    {
+                        <span class="badge bg-primary ms-1">Nguyên Liệu</span>
+                    }
+                    @if (dua.TenLoai.Contains("(TP)"))
+                    {
+                        <span class="badge bg-success ms-1">Thành Phẩm</span>
+                    }
+                </td>
+
+                <td class="text-end fw-bold text-success">
+                    @* Hiển thị giá tiền *@
+                    @dua.GiaThamKhao đ
+                </td>
+
+                <td class="text-center">
+                    @* 👇 4. CÁC NÚT THAO TÁC:
+                       Luôn nhớ: asp-route-id="@dua.Id"
+                       Để biết chính xác là Sửa/Xóa trái dừa nào. *@
+                    <a asp-action="Edit" asp-route-id="@dua.Id" class="btn btn-warning btn-sm me-1" title="Sửa">
+                        <i class="fa-solid fa-pen-to-square"></i>
+                    </a>
+
+                    <a asp-action="Delete" asp-route-id="@dua.Id" class="btn btn-danger btn-sm" title="Xóa">
+                        <i class="fa-solid fa-trash"></i>
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

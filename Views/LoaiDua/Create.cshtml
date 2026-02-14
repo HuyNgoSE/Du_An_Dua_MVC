@@ -1,0 +1,75 @@
+﻿@model Du_An_Dua_MVC.Models.LoaiDua
+@* 👆 1. KHAI BÁO KHUÔN MẪU:
+   Dòng này bảo View: "Chuẩn bị cái khuôn LoaiDua để hứng dữ liệu nhập vào nhé".
+   Nhờ nó mà em gõ "Ten..." là nó tự hiểu là "TenLoai". *@
+
+@{
+    ViewData["Title"] = "Thêm Mới Loại Dừa";
+}
+
+<div class="row justify-content-center mt-4">
+    <div class="col-md-8">
+        <div class="card shadow-sm border-0">
+
+            <div class="card-header bg-success text-white">
+                <h4 class="mb-0 fw-bold">
+                    <i class="fa-solid fa-plus-circle"></i> Thêm Loại Dừa Mới
+                </h4>
+            </div>
+
+            <div class="card-body p-4">
+
+                @* 👇 2. ĐỊA CHỈ NGƯỜI NHẬN:
+                   asp-action="Create": Khi bấm Lưu, toàn bộ thông tin trong form này 
+                   sẽ được đóng gói và gửi bay về hàm Create (Post) trong Controller. *@
+                <form asp-action="Create">
+
+                    @* Bảng báo lỗi tổng (nếu có lỗi nặng) *@
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                    @* --- Ô NHẬP TÊN DỪA --- *@
+                    <div class="form-group mb-3">
+                        <label asp-for="TenLoai" class="control-label fw-bold mb-1">Tên Loại Dừa</label>
+
+                        @* 👇 3. KẾT NỐI TỰ ĐỘNG (Tag Helper):
+                           asp-for="TenLoai": Tự động sinh ra ô nhập liệu dính chặt với biến TenLoai trong code C#. *@
+                        <input asp-for="TenLoai" class="form-control" placeholder="Ví dụ: Dừa Xiêm Xanh..." />
+
+                        @* Hiện lỗi đỏ nếu quên nhập *@
+                        <span asp-validation-for="TenLoai" class="text-danger"></span>
+                    </div>
+
+                    @* --- Ô NHẬP GIÁ TIỀN --- *@
+                    <div class="form-group mb-4">
+                        <label asp-for="GiaThamKhao" class="control-label fw-bold mb-1">Giá Tham Khảo (VNĐ)</label>
+
+                        @* asp-for="GiaThamKhao": Dính chặt với biến Giá tiền *@
+                        <input asp-for="GiaThamKhao" class="form-control" type="number" placeholder="Nhập giá tiền..." />
+                        <span asp-validation-for="GiaThamKhao" class="text-danger"></span>
+                    </div>
+
+                    @* --- CÁC NÚT BẤM --- *@
+                    <div class="d-flex justify-content-between pt-2 border-top">
+                        <a asp-action="Index" class="btn btn-secondary">
+                            <i class="fa-solid fa-arrow-left"></i> Quay lại
+                        </a>
+
+                        @* 👇 4. NÚT CHỐT ĐƠN (Submit):
+                           Quan trọng nhất là type="submit". Bấm cái này là Gửi đi. *@
+                        <button type="submit" class="btn btn-success px-4 fw-bold shadow">
+                            <i class="fa-solid fa-save"></i> Lưu Lại
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        @* 👇 5. BẢO VỆ VÒNG NGOÀI (Client Validation):
+           Giúp chặn lỗi ngay lập tức trên trình duyệt (VD: Quên nhập tên) mà không cần hỏi Server. *@
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

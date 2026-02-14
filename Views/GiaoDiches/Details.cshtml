@@ -1,0 +1,100 @@
+﻿@model Du_An_Dua_MVC.Models.GiaoDich
+@* 👆 1. CHẾ ĐỘ "CHỈ ĐỌC" (Read-Only):
+   Trang này giống như cầm tờ hóa đơn lên soi dưới kính lúp.
+   Chỉ được nhìn, không được sửa (muốn sửa phải bấm nút ở dưới đáy). *@
+
+@{
+    ViewData["Title"] = "Xem Chi Tiết";
+}
+
+<h1>Chi Tiết Giao Dịch</h1>
+
+<div>
+    <h4>Giao Dịch</h4>
+    <hr />
+
+    @* 👇 2. CẤU TRÚC HỎI - ĐÁP (Description List):
+       Thẻ <dl> dùng để liệt kê thông tin.
+       - <dt>: Câu hỏi (Nhãn) - Ví dụ: "Ngày nào?"
+       - <dd>: Câu trả lời (Giá trị) - Ví dụ: "Hôm nay". *@
+    <dl class="row">
+
+        @* --- NGÀY GIAO DỊCH --- *@
+        <dt class="col-sm-2">
+            @* DisplayNameFor: Hỏi Model "Tên của cái ô này là gì?" -> Trả về: "Ngày Giao Dịch" *@
+            @Html.DisplayNameFor(model => model.NgayGiaoDich)
+        </dt>
+        <dd class="col-sm-10">
+            @* DisplayFor: Hỏi Model "Giá trị bên trong là bao nhiêu?" -> Trả về: "07/02/2026" *@
+            @Html.DisplayFor(model => model.NgayGiaoDich)
+        </dd>
+
+        @* --- LOẠI GIAO DỊCH (MUA/BÁN) --- *@
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.IsMuaHang)
+        </dt>
+        <dd class="col-sm-10">
+            @* Chỗ này nó sẽ hiện cái checkbox (đã tích hoặc chưa tích) *@
+            @Html.DisplayFor(model => model.IsMuaHang)
+        </dd>
+
+        @* --- SỐ LƯỢNG --- *@
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.SoLuong)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.SoLuong)
+        </dd>
+
+        @* --- ĐƠN GIÁ --- *@
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.DonGia)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.DonGia)
+        </dd>
+
+        @* --- THÀNH TIỀN --- *@
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.ThanhTien)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.ThanhTien)
+        </dd>
+
+        @* --- GHI CHÚ --- *@
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.GhiChu)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.GhiChu)
+        </dd>
+
+        @* --- ĐỐI TÁC --- *@
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.DoiTac)
+        </dt>
+        <dd class="col-sm-10">
+            @* 👇 3. PHÉP THẾ THÂN (Null Coalescing - ??):
+               Dịch: "Hãy hiện Loại Đối Tác. NHƯNG nếu lỡ Đối Tác bị xóa rồi (Null),
+               thì hiện dòng chữ 'Chưa có đối tác' chứ đừng báo lỗi sập web nhé!" *@
+            @(Model.DoiTac?.LoaiDoiTac ?? "Chưa có đối tác")
+        </dd>
+
+        @* --- LOẠI DỪA --- *@
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.LoaiDua)
+        </dt>
+        <dd class="col-sm-10">
+            @* Tương tự: Nếu mất loại dừa thì hiện số 0 *@
+            @(Model.LoaiDua?.Id ?? 0)
+        </dd>
+    </dl>
+</div>
+<div>
+    @* 👇 4. ĐỊNH VỊ CHÍNH XÁC:
+       asp-route-id="@Model?.Id": Khi bấm sửa, phải nói rõ là sửa tờ hóa đơn nào (kèm ID).
+       Dấu ? ở Model?.Id là để phòng hờ: Lỡ Model bị rỗng thì không làm gì cả, tránh lỗi. *@
+    <a asp-action="Edit" asp-route-id="@Model?.Id">Chỉnh Sửa</a> |
+    <a asp-action="Index">Trở Lại Danh Sách Giao Dịch</a>
+</div>

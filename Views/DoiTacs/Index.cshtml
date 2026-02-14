@@ -1,0 +1,102 @@
+﻿@model IEnumerable<Du_An_Dua_MVC.Models.DoiTac>
+@* 👆 1. KHAI BÁO DANH SÁCH (Collection):
+   Lưu ý chữ "IEnumerable" (nghĩa là Một tập hợp/Một danh sách).
+   Trang này không cầm 1 tờ hồ sơ lẻ, mà nó cầm "Cả một xấp" hồ sơ DoiTac trên tay. *@
+
+@{
+    ViewData["Title"] = "Danh Sách Đối Tác";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3 mt-3">
+    <h2 class="text-primary fw-bold">
+        <i class="fa-solid fa-users"></i> Danh Sách Đối Tác
+    </h2>
+
+    @* Nút bấm dẫn sang trang Tạo Mới *@
+    <a asp-action="Create" class="btn btn-primary shadow">
+        <i class="fa-solid fa-user-plus"></i> Thêm Đối Tác Mới
+    </a>
+</div>
+
+<div class="card shadow-sm border-0">
+    <div class="card-body p-0">
+        <table class="table table-hover table-striped mb-0">
+            <thead class="table-primary text-center">
+                <tr>
+                    <th class="text-start">Tên Đối Tác</th>
+                    <th>Số Điện Thoại</th>
+                    <th>Phân Loại</th>
+                    <th width="150px">Hành Động</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                @* 👇 2. CỖ MÁY IN ẤN (Vòng lặp Foreach):
+                   Cơ chế: "Với mỗi (item) nằm trong Danh sách (Model)..."
+                   Nếu danh sách có 100 người, đoạn code bên trong ngoặc nhọn { } sẽ chạy lại 100 lần.
+                   Mỗi lần chạy, nó in ra một dòng <tr> mới. *@
+                @foreach (var item in Model)
+                {
+                    <tr class="align-middle">
+                        <td class="fw-bold text-dark text-start">
+                            <i class="fa-solid fa-user-tie text-secondary me-2"></i>
+
+                            @* In tên của người hiện tại *@
+                            @Html.DisplayFor(modelItem => item.TenDoiTac)
+                        </td>
+
+                        <td class="text-center">
+                            @* 👇 3. LOGIC KIỂM TRA SỐ:
+                               Nếu có số ĐT (!null) thì hiện cái khung đẹp.
+                               Nếu chưa có số (else) thì hiện chữ "Checking..." cho đỡ trống trải. *@
+                            @if (!string.IsNullOrEmpty(item.SoDienThoai))
+                            {
+                                <span class="badge bg-light text-dark border">
+                                    <i class="fa-solid fa-phone"></i> @item.SoDienThoai
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="text-muted small">Checking...</span>
+                            }
+                        </td>
+
+                        <td class="text-center">
+                            @* 👇 4. PHÂN BIỆT MÀU SẮC:
+                               Người Bán (Nông dân) -> Màu Xanh Lá (Success).
+                               Khách Mua (Thương lái) -> Màu Xanh Dương Nhạt (Info).
+                               Giúp Cha nhìn lướt qua là biết ai với ai. *@
+                            @if (item.LoaiDoiTac == "Người Bán")
+                            {
+                                <span class="badge bg-success">Người Bán (Nông Dân)</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-info text-dark">Khách Mua (Thương Lái)</span>
+                            }
+                        </td>
+
+                        <td class="text-center">
+                            <div class="btn-group btn-group-sm">
+
+                                @* 👇 5. BỘ BA QUYỀN LỰC (Edit - Details - Delete):
+                                   QUAN TRỌNG NHẤT: asp-route-id="@item.Id"
+                                   Nó gắn cái ID vào sau lưng nút bấm.
+                                   Để khi bấm Sửa, hệ thống biết chính xác là sửa "Ông A" chứ không phải "Ông B". *@
+                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning text-white" title="Sửa">
+                                    <i class="fa-solid fa-pen"></i>
+                                </a>
+                                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-secondary" title="Xem">
+                                    <i class="fa-solid fa-eye"></i>
+                                </a>
+                                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger" title="Xóa">
+                                    <i class="fa-solid fa-trash"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

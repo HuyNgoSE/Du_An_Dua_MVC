@@ -1,0 +1,62 @@
+﻿@model Du_An_Dua_MVC.Models.GiaoDich
+@* 👆 1. HÓA ĐƠN TỬ TÙ:
+   Trang này nhận vào đúng 1 tờ hóa đơn (GiaoDich) cụ thể để chuẩn bị "hủy diệt". *@
+
+@{
+    ViewData["Title"] = "Xóa Giao Dịch";
+}
+
+<div class="row justify-content-center mt-5">
+    <div class="col-md-6">
+        <div class="card border-danger shadow">
+            @* Giao diện màu đỏ (Danger) để cảnh báo nguy hiểm *@
+            <div class="card-header bg-danger text-white text-center">
+                <h3 class="mb-0 fw-bold"><i class="fa-solid fa-triangle-exclamation"></i> CẢNH BÁO XÓA</h3>
+            </div>
+            <div class="card-body text-center p-4">
+                <h4 class="text-danger mb-4">Cha có chắc muốn xóa đơn hàng này không?</h4>
+
+                <div class="alert alert-warning text-start shadow-sm">
+                    @* 👇 2. FORMAT NGÀY GIỜ:
+                       ToString("dd/MM/yyyy HH:mm"): Biến cái ngày tháng khô khan của máy tính
+                       thành kiểu Việt Nam (Ngày/Tháng/Năm Giờ:Phút) cho dễ đọc. *@
+                    <p><strong>📅 Ngày:</strong> @Model.NgayGiaoDich.ToString("dd/MM/yyyy HH:mm")</p>
+
+                    @* 👇 3. PHÉP THẾ THÂN (Null Coalescing - ??):
+                       Logic: "Hãy hiện tên Đối Tác. NHƯNG nếu lỡ Đối Tác đó bị xóa rồi (Null),
+                       thì hãy hiện dòng chữ 'Khách vãng lai...' thay vì báo lỗi sập web." *@
+                    <p><strong>👤 Đối tác:</strong> @(Model.DoiTac?.TenDoiTac ?? "Khách vãng lai/Đã xóa")</p>
+
+                    @* Tương tự với Loại Dừa *@
+                    <p><strong>🥥 Loại dừa:</strong> @(Model.LoaiDua?.TenLoai ?? "Dừa chưa phân loại")</p>
+
+                    @* 👇 4. FORMAT TIỀN TỆ:
+                       ToString("#,##0"): Tự động thêm dấu phẩy ngăn cách hàng nghìn (VD: 1000000 -> 1,000,000) *@
+                    <p class="mb-0"><strong>💰 Số tiền:</strong> <span class="fw-bold text-danger">@Model.ThanhTien.ToString("#,##0") đ</span></p>
+                </div>
+
+                <p class="text-muted fst-italic small">Lưu ý: Xóa rồi là mất luôn doanh thu này, không lấy lại được đâu nha!</p>
+
+                @* 👇 5. LỆNH HỦY DIỆT (Form Post): *@
+                <form asp-action="Delete">
+
+                    @* ⚠️ 6. CÁI MỎ NEO (Hidden Input) - BẮT BUỘC PHẢI CÓ:
+                       Nó âm thầm báo cho Controller biết: "Cái hóa đơn cần xóa có ID là bao nhiêu".
+                       Thiếu dòng này là bấm nút Xóa nó không biết xóa ai đâu. *@
+                    <input type="hidden" asp-for="Id" />
+
+                    <div class="d-flex justify-content-center gap-3 mt-4">
+                        @* Nút Quay Xe *@
+                        <a asp-action="Index" class="btn btn-secondary px-4">
+                            <i class="fa-solid fa-xmark"></i> Thôi, đừng xóa
+                        </a>
+                        @* Nút Chốt Hạ *@
+                        <button type="submit" class="btn btn-danger px-4 fw-bold shadow">
+                            <i class="fa-solid fa-trash"></i> Chắc chắn xóa
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

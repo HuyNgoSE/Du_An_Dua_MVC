@@ -1,0 +1,202 @@
+﻿@model IEnumerable<Du_An_Dua_MVC.Models.GiaoDich>
+@* 👆 1. KHAI BÁO DANH SÁCH:
+   Trang này cầm trong tay "IEnumerable" (Một xấp) các hóa đơn GiaoDich để hiển thị. *@
+
+@{
+    ViewData["Title"] = "Lịch Sử Giao Dịch";
+}
+
+@* --- PHẦN 1: BỘ LỌC TÌM KIẾM --- *@
+<div class="card shadow-sm mb-4 border-0 bg-light">
+    <div class="card-body p-3">
+        @* 👇 2. GỬI YÊU CẦU (Method GET):
+           method="get": Khi tìm kiếm, dữ liệu sẽ hiện lên thanh địa chỉ (URL).
+           Ví dụ: /GiaoDich?searchDate=2026-02-07
+           Giúp em có thể copy link này gửi cho người khác xem đúng ngày đó. *@
+        <form asp-action="Index" method="get" class="row g-3 align-items-center">
+
+            <div class="col-auto">
+                <span class="fw-bold text-secondary">
+                    <i class="fa-solid fa-filter"></i> Đang xem:
+                    <span class="text-primary">@ViewData["CurrentFilter"]</span>
+                </span>
+            </div>
+
+            <div class="col-auto">
+                @* 👇 3. TỰ ĐỘNG NỘP ĐƠN (Auto Submit):
+                   onchange="this.form.submit()":
+                   Dịch: "Hễ Cha chọn ngày xong cái là Gửi đi liền, khỏi cần bấm nút Tìm". *@
+                <input type="date" name="searchDate" class="form-control border-primary"
+                       value="@ViewData["CurrentDate"]" onchange="this.form.submit()" />
+            </div>
+
+            <div class="col-auto">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fa-solid fa-magnifying-glass"></i> Tìm
+                </button>
+
+                @* Nút reset để xem lại toàn bộ lịch sử *@
+                <button type="submit" name="showAll" value="true" class="btn btn-outline-secondary">
+                    <i class="fa-solid fa-list"></i> Xem Tất Cả
+                </button>
+            </div>
+
+            <div class="col ms-auto text-end">
+                <a asp-action="Create" class="btn btn-success shadow">
+                    <i class="fa-solid fa-plus"></i> Nhập Hàng Mới
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@* --- PHẦN 2: BẢNG THẦN SỐ (DASHBOARD) --- *@
+@* 👇 4. HIỂN THỊ TIỀN TỔNG (ViewBag):
+   Những con số này được Controller tính toán sẵn và nhét vào túi ViewBag.
+   Ở đây mình chỉ việc lôi ra và Format lại cho đẹp (thêm dấu phẩy). *@
+<div class="row mb-3 text-center">
+    <div class="col-md-4">
+        <div class="alert alert-success m-1 shadow-sm">
+            <small>TỔNG THU (BÁN)</small><br>
+            <strong class="fs-5">@string.Format("{0:N0}", ViewBag.TongThu) đ</strong>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="alert alert-danger m-1 shadow-sm">
+            <small>TỔNG CHI (NHẬP)</small><br>
+            <strong class="fs-5">@string.Format("{0:N0}", ViewBag.TongChi) đ</strong>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="alert alert-primary m-1 shadow-sm">
+            <small>LỢI NHUẬN RÒNG</small><br>
+            <strong class="fs-5">@string.Format("{0:N0}", ViewBag.LoiNhuan) đ</strong>
+        </div>
+    </div>
+</div>
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="text-success m-0"><i class="fa-solid fa-clock-rotate-left"></i> Nhật Ký Mua Bán</h2>
+    <a asp-action="Create" class="btn btn-primary">
+        <i class="fa-solid fa-plus"></i> Tạo Phiếu Mới
+    </a>
+</div>
+
+@* (Đoạn Card Dashboard to đùng bên dưới là lặp lại của đoạn trên để trang trí thêm, thầy giữ nguyên nhé) *@
+<div class="row mb-4 text-center">
+    <div class="col-md-4">
+        <div class="card bg-success text-white shadow-sm">
+            <div class="card-body">
+                <h6 class="card-title text-uppercase mb-0">Tổng Thu (Bán)</h6>
+                <h3 class="fw-bold">@(((decimal)ViewBag.TongThu).ToString("#,##0")) đ</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card bg-danger text-white shadow-sm">
+            <div class="card-body">
+                <h6 class="card-title text-uppercase mb-0">Tổng Chi (Mua)</h6>
+                <h3 class="fw-bold">@(((decimal)ViewBag.TongChi).ToString("#,##0")) đ</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card bg-primary text-white shadow-sm">
+            <div class="card-body">
+                <h6 class="card-title text-uppercase mb-0">Lợi Nhuận Ròng</h6>
+                <h3 class="fw-bold">@(((decimal)ViewBag.LoiNhuan).ToString("#,##0")) đ</h3>
+                <small>(Thu - Chi)</small>
+            </div>
+        </div>
+    </div>
+</div>
+<hr />
+
+@* --- PHẦN 3: DANH SÁCH CHI TIẾT (TABLE) --- *@
+<div class="card shadow-sm border-0">
+    <div class="card-body p-0">
+        <table class="table table-hover table-striped mb-0">
+            <thead class="table-success">
+                <tr>
+                    <th>Ngày GD</th>
+                    <th>Loại GD</th>
+                    <th>Đối Tác</th>
+                    <th>Loại Dừa</th>
+                    <th class="text-end">Số Lượng</th>
+                    <th class="text-end">Đơn Giá</th>
+                    <th>Ghi Chú</th>
+                    <th class="text-center">Thao Tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                @* 👇 5. MÁY IN HÓA ĐƠN (Vòng lặp Foreach):
+                   Chạy từng dòng một để in ra bảng *@
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            @* In ngày và giờ riêng cho dễ nhìn *@
+                            @item.NgayGiaoDich.ToString("dd/MM/yyyy")
+                            <br />
+                            <small class="text-muted">@item.NgayGiaoDich.ToString("HH:mm")</small>
+                        </td>
+
+                        <td>
+                            @* 👇 6. LOGIC MÀU SẮC:
+                               Mua (Chi tiền) -> Màu Đỏ.
+                               Bán (Thu tiền) -> Màu Xanh. *@
+                            @if (item.IsMuaHang)
+                            {
+                                <span class="badge bg-danger">Mua Vào (Chi)</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-success">Bán Ra (Thu)</span>
+                            }
+                        </td>
+
+                        <td class="fw-bold text-primary">
+                            @* 👇 7. PHÉP THẾ THÂN (Null Coalescing ??):
+                               Nếu Đối Tác đã bị xóa (null), thì hiện "Khách vãng lai"
+                               thay vì báo lỗi sập web. *@
+                            @(item.DoiTac?.TenDoiTac ?? "Khách vãng lai")
+                        </td>
+
+                        <td>
+                            🥥 @(item.LoaiDua?.TenLoai ?? "Dừa chưa phân loại")
+                        </td>
+
+                        <td class="text-end">
+                            @item.SoLuong.ToString("N0")
+                        </td>
+
+                        <td class="text-end fw-bold">
+                            @item.DonGia.ToString("#,##0") đ
+                        </td>
+
+                        <td>
+                            @Html.DisplayFor(modelItem => item.GhiChu)
+                        </td>
+
+                        <td class="text-center">
+                            <div class="btn-group btn-group-sm">
+                                @* Các nút bấm thao tác, nhớ kèm theo ID *@
+                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning text-white" title="Sửa">
+                                    <i class="fa-solid fa-pen"></i>
+                                </a>
+                                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info text-white" title="Xem">
+                                    <i class="fa-solid fa-eye"></i>
+                                </a>
+                                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger" title="Xóa">
+                                    <i class="fa-solid fa-trash"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

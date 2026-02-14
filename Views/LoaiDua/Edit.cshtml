@@ -1,0 +1,74 @@
+﻿@model Du_An_Dua_MVC.Models.LoaiDua
+@* 👆 1. HỨNG DỮ LIỆU CŨ:
+   Trang này nhận vào thông tin của trái dừa cần sửa (VD: Dừa Xiêm, ID=5).
+   Các ô nhập liệu bên dưới sẽ tự động lấy thông tin này điền vào sẵn. *@
+
+@{
+    ViewData["Title"] = "Cập Nhật Loại Dừa";
+}
+
+<div class="row justify-content-center mt-4">
+    <div class="col-md-8">
+
+        <div class="card shadow-sm border-warning">
+
+            <div class="card-header bg-warning text-dark">
+                <h4 class="mb-0 fw-bold">
+                    <i class="fa-solid fa-pen-to-square"></i> Cập Nhật Loại Dừa
+                </h4>
+            </div>
+
+            <div class="card-body p-4">
+
+                @* 👇 2. ĐỊA CHỈ GỬI VỀ:
+                   asp-action="Edit": Sửa xong bấm Lưu thì gửi về hàm Edit (Post). *@
+                <form asp-action="Edit">
+
+                    @* ⚠️ 3. CÁI MỎ NEO (Hidden Input) - QUAN TRỌNG NHẤT:
+                       Dòng này KHÔNG hiện ra, nhưng nó nắm giữ cái ID (VD: ID=5).
+                       Nếu thiếu nó: Em sửa tên thành công, nhưng Server không biết áp cái tên mới đó vào trái dừa nào -> Lỗi. *@
+                    <input type="hidden" asp-for="Id" />
+
+                    @* Bảng báo lỗi tổng quát *@
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                    @* --- Ô SỬA TÊN --- *@
+                    <div class="form-group mb-3">
+                        <label asp-for="TenLoai" class="control-label fw-bold mb-1">Tên Loại Dừa</label>
+
+                        @* 👇 4. TỰ ĐỘNG ĐIỀN (Auto-fill):
+                           asp-for="TenLoai": Tự động lôi tên cũ từ Database điền vào đây. *@
+                        <input asp-for="TenLoai" class="form-control" />
+                        <span asp-validation-for="TenLoai" class="text-danger"></span>
+                    </div>
+
+                    @* --- Ô SỬA GIÁ --- *@
+                    <div class="form-group mb-4">
+                        <label asp-for="GiaThamKhao" class="control-label fw-bold mb-1">Giá Tham Khảo (VNĐ)</label>
+                        <input asp-for="GiaThamKhao" class="form-control" type="number" />
+                        <span asp-validation-for="GiaThamKhao" class="text-danger"></span>
+                    </div>
+
+                    <div class="d-flex justify-content-between pt-2 border-top">
+                        <a asp-action="Index" class="btn btn-secondary">
+                            <i class="fa-solid fa-arrow-left"></i> Hủy Bỏ
+                        </a>
+
+                        @* 👇 5. NÚT LƯU (Submit): *@
+                        <button type="submit" class="btn btn-warning px-4 fw-bold shadow">
+                            <i class="fa-solid fa-check"></i> Lưu Thay Đổi
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        @* 👇 6. BẢO VỆ TỪ XA (Client Validation): *@
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

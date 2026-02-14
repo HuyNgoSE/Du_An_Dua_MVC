@@ -1,0 +1,108 @@
+﻿@{
+    ViewData["Title"] = "Đăng Nhập Hệ Thống";
+
+    // 💡 Trang Login đứng riêng, không dùng Layout chung
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <title>Đăng Nhập - Coco Web</title>
+
+    <!-- 💡 Bootstrap = khung xương giao diện -->
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+
+    <style>
+        /* 💡 CĂN GIỮA MÀN HÌNH (quan trọng nhất)
+                   Flexbox giúp khung login luôn nằm giữa */
+        body {
+            background: linear-gradient(135deg, #e9f5ec, #f8f9fa);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        /* 💡 KHUNG ĐĂNG NHẬP (quan trọng)
+                   Nền trắng + bo góc + bóng = nhìn chuyên nghiệp ngay */
+        .login-card {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        /* 💡 LOGO (chỉ để nhìn nổi bật hơn) */
+        .brand-logo {
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 15px;
+            color: #198754; /* xanh Bootstrap */
+        }
+
+        /* 💡 NÚT đẹp hơn chút */
+        .btn-success {
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="login-card">
+
+        <div class="brand-logo">🥥 COCO-WEB SYSTEM</div>
+
+        <h5 class="text-center text-muted mb-4">Mời Lãnh Đạo Đăng Nhập</h5>
+
+        @* 💡 Hiện lỗi nếu đăng nhập sai *@
+        @if (ViewBag.Error != null)
+        {
+            <div class="alert alert-danger text-center">
+                @ViewBag.Error
+            </div>
+        }
+
+        <!-- 💡 Form login - phần quan trọng nhất -->
+        <form method="post" action="/Account/Login">
+
+            <div class="mb-3">
+                <label class="form-label">Tài khoản</label>
+                <input type="text"
+                       name="username"
+                       class="form-control"
+                       placeholder="Tên đăng nhập"
+                       required
+                       autofocus>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Mật khẩu</label>
+                <input type="password"
+                       name="password"
+                       class="form-control"
+                       placeholder="Nhập mật khẩu"
+                       required>
+            </div>
+
+            <!-- 💡 Nút submit -->
+            <div class="d-grid gap-2">
+                <button type="submit" class="btn btn-success btn-lg">
+                    🔓 Mở Cổng
+                </button>
+            </div>
+
+        </form>
+
+        <div class="text-center mt-3">
+            <small class="text-muted">Hệ thống quản lý dừa nội bộ</small>
+        </div>
+
+    </div>
+
+</body>
+</html>

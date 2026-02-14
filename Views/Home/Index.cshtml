@@ -1,0 +1,177 @@
+﻿@model IEnumerable<Du_An_Dua_MVC.Models.BaoCaoTonKho>
+@* 👆 1. GIẤY TỜ THÔNG HÀNH:
+   Trang chủ này không đi tay không, mà nó cầm theo một danh sách "BaoCaoTonKho".
+   Nhiệm vụ: Để hiển thị cái bảng tồn kho ở cuối trang. *@
+
+@{
+    ViewData["Title"] = "Trang Chủ";
+}
+
+@* --- PHẦN 1: BANNER CHÀO MỪNG (Chủ yếu là trang trí) --- *@
+<div class="p-5 mb-4 rounded-3 shadow-sm text-center hero-ben-tre">
+    <div class="container-fluid py-3">
+        <h1 class="display-4 fw-bold text-success">
+            <i class="fa-solid fa-tree"></i> Vựa Dừa Coco-Web
+        </h1>
+        <p class="fs-4 text-muted mt-2">
+            Phần mềm quản lý chuỗi cung ứng dừa chuyên nghiệp.
+            <br />
+            <span class="badge bg-warning text-dark mt-2">
+                <i class="fa-solid fa-star"></i> Chúc Chủ Vựa Một Ngày Buôn May Bán Đắt! <i class="fa-solid fa-star"></i>
+            </span>
+        </p>
+    </div>
+</div>
+
+@* --- PHẦN 2: BẢNG ĐIỀU KHIỂN TRUNG TÂM (Navigation Cards) --- *@
+<div class="row align-items-md-stretch">
+
+    @* 👇 2. ĐỊNH VỊ GPS (Routing):
+       asp-controller="GiaoDiches": Đi đến tòa nhà Giao Dịch.
+       asp-action="Index": Vào cửa chính (Trang danh sách). *@
+    <div class="col-md-3 mb-3">
+        <a asp-controller="GiaoDiches" asp-action="Index" class="text-decoration-none card-hover">
+            <div class="h-100 p-4 text-white bg-success rounded-3 shadow position-relative overflow-hidden">
+                <i class="fa-solid fa-cart-shopping position-absolute" style="font-size: 80px; opacity: 0.1; right: -10px; bottom: -10px;"></i>
+                <h3 class="fw-bold">Giao Dịch</h3>
+                <p class="mt-2 small">Nhập hàng & Bán hàng.</p>
+                <div class="mt-auto">
+                    <span class="btn btn-sm btn-light text-success fw-bold">Vào Việc <i class="fa-solid fa-arrow-right"></i></span>
+                </div>
+            </div>
+        </a>
+    </div>
+
+    <div class="col-md-3 mb-3">
+        <a asp-controller="SanXuat" asp-action="Index" class="text-decoration-none card-hover">
+            <div class="h-100 p-4 text-white bg-warning rounded-3 shadow position-relative overflow-hidden" style="background: linear-gradient(45deg, #ff9800, #f57c00);">
+                <i class="fa-solid fa-gears position-absolute" style="font-size: 80px; opacity: 0.2; right: -10px; bottom: -10px;"></i>
+                <h3 class="fw-bold">Chế Biến</h3>
+                <p class="mt-2 small text-white">Lột vỏ - Mài - Sấy.</p>
+                <div class="mt-auto">
+                    <span class="btn btn-sm btn-light text-warning fw-bold">Xưởng Sản Xuất <i class="fa-solid fa-hammer"></i></span>
+                </div>
+            </div>
+        </a>
+    </div>
+
+    <div class="col-md-3 mb-3">
+        <a asp-controller="DoiTacs" asp-action="Index" class="text-decoration-none card-hover">
+            <div class="h-100 p-4 bg-primary text-white rounded-3 shadow position-relative overflow-hidden">
+                <i class="fa-solid fa-users position-absolute" style="font-size: 80px; opacity: 0.1; right: -10px; bottom: -10px;"></i>
+                <h3 class="fw-bold">Đối Tác</h3>
+                <p class="mt-2 small">Danh bạ Nhà vườn.</p>
+                <div class="mt-auto">
+                    <span class="btn btn-sm btn-light text-primary fw-bold">Xem Danh Sách</span>
+                </div>
+            </div>
+        </a>
+    </div>
+
+    <div class="col-md-3 mb-3">
+        <a asp-controller="LoaiDua" asp-action="Index" class="text-decoration-none card-hover">
+            <div class="h-100 p-4 bg-dark text-white rounded-3 shadow position-relative overflow-hidden">
+                <i class="fa-solid fa-tags position-absolute" style="font-size: 80px; opacity: 0.1; right: -10px; bottom: -10px;"></i>
+                <h3 class="fw-bold">Loại Dừa</h3>
+                <p class="mt-2 small">Cập nhật bảng giá.</p>
+                <div class="mt-auto">
+                    <span class="btn btn-sm btn-light text-dark fw-bold">Điều Chỉnh Giá</span>
+                </div>
+            </div>
+        </a>
+    </div>
+</div>
+
+<style>
+    .hero-ben-tre {
+        background: linear-gradient(135deg, #f1f8e9 0%, #dcedc8 100%);
+        border-left: 10px solid #4caf50;
+    }
+
+    .card-hover {
+        display: block;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+        .card-hover:hover {
+            transform: translateY(-7px);
+            box-shadow: 0 1rem 3rem rgba(0,0,0,.175) !important;
+        }
+</style>
+
+<hr class="my-5 border-success opacity-50">
+
+@* --- PHẦN 3: BẢNG TỒN KHO THÔNG MINH (Logic hiển thị) --- *@
+<div class="row">
+    <div class="col-12">
+        <div class="card shadow border-0">
+            <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+                <h3 class="mb-0 fw-bold"><i class="fa-solid fa-warehouse"></i> TỒN KHO THỜI GIAN THỰC</h3>
+                <span class="badge bg-light text-success">Cập nhật tự động</span>
+            </div>
+            <div class="card-body p-0">
+
+                @* 👇 3. KIỂM TRA RỖNG:
+                   Model.Any(): Kiểm tra xem trong kho có dữ liệu nào không.
+                   Dấu chấm than (!): Nghĩa là KHÔNG có.
+                   -> Nếu kho trống trơn thì hiện cái hình cái hộp rỗng cho đỡ buồn. *@
+                @if (!Model.Any())
+                {
+                    <div class="p-4 text-center text-muted">
+                        <i class="fa-solid fa-box-open fa-3x mb-3"></i>
+                        <p>Chưa có dữ liệu giao dịch nào. Hãy nhập hàng đi Ông Chủ!</p>
+                    </div>
+                }
+                else
+                {
+                    <table class="table table-striped table-hover mb-0 align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="ps-4">Tên Loại Dừa</th>
+                                <th class="text-center">Trạng Thái Kho</th>
+                                <th class="text-end pe-4">Số Lượng Tồn</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td class="ps-4 fw-bold fs-5 text-success">@item.TenLoaiDua</td>
+
+                                    @* 👇 4. LOGIC ĐÈN GIAO THÔNG (Quan trọng):
+                                       Dựa vào số lượng tồn kho để hiện màu cảnh báo. *@
+                                    <td class="text-center">
+                                        @if (item.SoLuongTon > 100)
+                                        {
+                                            @* > 100 trái: Màu Xanh (An toàn, hàng nhiều) *@
+                                            <span class="badge bg-success rounded-pill px-3 py-2"><i class="fa-solid fa-check"></i> Dồi dào</span>
+                                        }
+                                        else if (item.SoLuongTon > 0)
+                                        {
+                                            @* > 0 trái (nhưng dưới 100): Màu Vàng (Cẩn thận, sắp hết) *@
+                                            <span class="badge bg-warning text-dark rounded-pill px-3 py-2"><i class="fa-solid fa-triangle-exclamation"></i> Sắp hết</span>
+                                        }
+                                        else if (item.SoLuongTon == 0)
+                                        {
+                                            @* = 0 trái: Màu Xám (Hết sạch) *@
+                                            <span class="badge bg-secondary rounded-pill px-3 py-2"><i class="fa-solid fa-ban"></i> Hết hàng</span>
+                                        }
+                                        else
+                                        {
+                                            @* < 0 trái: Màu Đỏ (Lỗi nghiêm trọng - Bán nhiều hơn nhập) *@
+                                            <span class="badge bg-danger rounded-pill px-3 py-2"><i class="fa-solid fa-bell"></i> Âm Kho (@item.SoLuongTon)</span>
+                                        }
+                                    </td>
+
+                                    <td class="text-end pe-4 fw-bold fs-4 text-dark">
+                                        @item.SoLuongTon.ToString("N0") <span class="fs-6 text-muted">Trái</span>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+            </div>
+        </div>
+    </div>
+</div>
